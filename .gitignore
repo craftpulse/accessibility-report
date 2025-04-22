@@ -1,2 +1,5 @@
 # BUILD FILES
 /node_modules/*
+
+accessibility-report.md
+accessibility-report.pdf
