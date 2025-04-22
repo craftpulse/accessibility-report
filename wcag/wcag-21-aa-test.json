@@ -1,0 +1,289 @@
+[
+  {
+    "sc": "1.1.1",
+    "title": "Non-text Content",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "All non-text content that is presented to the user has a text alternative that serves the equivalent purpose, except for the situations listed below."
+  },
+  {
+    "sc": "1.2.1",
+    "title": "Audio-only and Video-only (Prerecorded)",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "For prerecorded audio-only and prerecorded video-only media, the following are true, except when the audio or video is a media alternative for text and is clearly labeled as such:"
+  },
+  {
+    "sc": "1.2.2",
+    "title": "Captions (Prerecorded)",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "Captions are provided for all prerecorded audio content in synchronized media, except when the media is a media alternative for text and is clearly labeled as such."
+  },
+  {
+    "sc": "1.2.3",
+    "title": "Audio Description or Media Alternative (Prerecorded)",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "An alternative for time-based media or audio description of the prerecorded video content is provided for synchronized media, except when the media is a media alternative for text and is clearly labeled as such."
+  },
+  {
+    "sc": "1.2.4",
+    "title": "Captions (Live)",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "Captions are provided for all live audio content in synchronized media."
+  },
+  {
+    "sc": "1.2.5",
+    "title": "Audio Description (Prerecorded)",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "Audio description is provided for all prerecorded video content in synchronized media."
+  },
+  {
+    "sc": "1.3.1",
+    "title": "Info and Relationships",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "Information, structure, and relationships conveyed through presentation can be programmatically determined or are available in text."
+  },
+  {
+    "sc": "1.3.2",
+    "title": "Meaningful Sequence",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "When the sequence in which content is presented affects its meaning, a correct reading sequence can be programmatically determined."
+  },
+  {
+    "sc": "1.3.3",
+    "title": "Sensory Characteristics",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "Instructions provided for understanding and operating content do not rely solely on sensory characteristics of components such as shape, color, size, visual location, orientation, or sound."
+  },
+  {
+    "sc": "1.4.1",
+    "title": "Use of Color",
+    "principle": "Perceivable",
+    "level": "A",
+    "description": "Color is not used as the only visual means of conveying information, indicating an action, prompting a response, or distinguishing a visual element."
+  },
+  {
+    "sc": "1.4.3",
+    "title": "Contrast (Minimum)",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following:"
+  },
+  {
+    "sc": "1.4.4",
+    "title": "Resize Text",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "Except for captions and images of text, text can be resized without assistive technology up to 200 percent without loss of content or functionality."
+  },
+  {
+    "sc": "1.4.5",
+    "title": "Images of Text",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "If the technologies being used can achieve the visual presentation, text is used to convey information rather than images of text except for the following:"
+  },
+  {
+    "sc": "1.4.10",
+    "title": "Reflow",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "Content can be presented without loss of information or functionality, and without requiring scrolling in two dimensions for:"
+  },
+  {
+    "sc": "1.4.11",
+    "title": "Non-text Contrast",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "The visual presentation of the following have a contrast ratio of at least 3:1 against adjacent color(s):"
+  },
+  {
+    "sc": "1.4.12",
+    "title": "Text Spacing",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "In content implemented using markup languages that support the following text style properties, no loss of content or functionality occurs by setting all of the following and by changing no other style property:"
+  },
+  {
+    "sc": "1.4.13",
+    "title": "Content on Hover or Focus",
+    "principle": "Perceivable",
+    "level": "AA",
+    "description": "Where receiving and then removing pointer hover or keyboard focus triggers additional content to become visible and then hidden, the following are true:"
+  },
+  {
+    "sc": "2.1.1",
+    "title": "Keyboard",
+    "principle": "Operable",
+    "level": "A",
+    "description": "All functionality of the content is operable through a keyboard interface without requiring specific timings for individual keystrokes, except where the underlying function requires input that depends on the path of the user's movement and not just the endpoints."
+  },
+  {
+    "sc": "2.1.2",
+    "title": "No Keyboard Trap",
+    "principle": "Operable",
+    "level": "A",
+    "description": "If keyboard focus can be moved to a component of the page using a keyboard interface, then focus can be moved away from that component using only a keyboard interface, and, if it requires more than unmodified arrow or tab keys or other standard exit methods, the user is advised of the method for moving focus away."
+  },
+  {
+    "sc": "2.2.1",
+    "title": "Timing Adjustable",
+    "principle": "Operable",
+    "level": "A",
+    "description": "For each time limit that is set by the content, at least one of the following is true:"
+  },
+  {
+    "sc": "2.2.2",
+    "title": "Pause, Stop, Hide",
+    "principle": "Operable",
+    "level": "A",
+    "description": "For moving, blinking, scrolling, or auto-updating information, all of the following are true:"
+  },
+  {
+    "sc": "2.3.1",
+    "title": "Three Flashes or Below Threshold",
+    "principle": "Operable",
+    "level": "A",
+    "description": "Web pages do not contain anything that flashes more than three times in any one second period, or the flash is below the general flash and red flash thresholds."
+  },
+  {
+    "sc": "2.4.1",
+    "title": "Bypass Blocks",
+    "principle": "Operable",
+    "level": "A",
+    "description": "A mechanism is available to bypass blocks of content that are repeated on multiple Web pages."
+  },
+  {
+    "sc": "2.4.2",
+    "title": "Page Titled",
+    "principle": "Operable",
+    "level": "A",
+    "description": "Web pages have titles that describe topic or purpose."
+  },
+  {
+    "sc": "2.4.3",
+    "title": "Focus Order",
+    "principle": "Operable",
+    "level": "A",
+    "description": "If a Web page can be navigated sequentially and the navigation sequences affect meaning or operation, focusable components receive focus in an order that preserves meaning and operability."
+  },
+  {
+    "sc": "2.4.4",
+    "title": "Link Purpose (In Context)",
+    "principle": "Operable",
+    "level": "A",
+    "description": "The purpose of each link can be determined from the link text alone or from the link text together with its programmatically determined link context, except where the purpose of the link would be ambiguous to users in general."
+  },
+  {
+    "sc": "2.4.5",
+    "title": "Multiple Ways",
+    "principle": "Operable",
+    "level": "AA",
+    "description": "More than one way is available to locate a Web page within a set of Web pages except where the Web Page is the result of, or a step in, a process."
+  },
+  {
+    "sc": "2.4.6",
+    "title": "Headings and Labels",
+    "principle": "Operable",
+    "level": "AA",
+    "description": "Headings and labels describe topic or purpose."
+  },
+  {
+    "sc": "2.4.7",
+    "title": "Focus Visible",
+    "principle": "Operable",
+    "level": "AA",
+    "description": "Any keyboard operable user interface has a mode of operation where the keyboard focus indicator is visible."
+  },
+  {
+    "sc": "3.1.1",
+    "title": "Language of Page",
+    "principle": "Understandable",
+    "level": "A",
+    "description": "The default human language of each Web page can be programmatically determined."
+  },
+  {
+    "sc": "3.1.2",
+    "title": "Language of Parts",
+    "principle": "Understandable",
+    "level": "AA",
+    "description": "The human language of each passage or phrase in the content can be programmatically determined except for proper names, technical terms, words of indeterminate language, and words or phrases that have become part of the vernacular of the immediately surrounding text."
+  },
+  {
+    "sc": "3.2.1",
+    "title": "On Focus",
+    "principle": "Understandable",
+    "level": "A",
+    "description": "When any user interface component receives focus, it does not initiate a change of context."
+  },
+  {
+    "sc": "3.2.2",
+    "title": "On Input",
+    "principle": "Understandable",
+    "level": "A",
+    "description": "Changing the setting of any user interface component does not automatically cause a change of context unless the user has been advised of the behavior before using the component."
+  },
+  {
+    "sc": "3.2.3",
+    "title": "Consistent Navigation",
+    "principle": "Understandable",
+    "level": "AA",
+    "description": "Navigational mechanisms that are repeated on multiple Web pages within a set of Web pages occur in the same relative order each time they are repeated, unless a change is initiated by the user."
+  },
+  {
+    "sc": "3.2.4",
+    "title": "Consistent Identification",
+    "principle": "Understandable",
+    "level": "AA",
+    "description": "Components that have the same functionality within a set of Web pages are identified consistently."
+  },
+  {
+    "sc": "3.3.1",
+    "title": "Error Identification",
+    "principle": "Understandable",
+    "level": "A",
+    "description": "If an input error is automatically detected, the item that is in error is identified and the error is described to the user in text."
+  },
+  {
+    "sc": "3.3.2",
+    "title": "Labels or Instructions",
+    "principle": "Understandable",
+    "level": "A",
+    "description": "Labels or instructions are provided when content requires user input."
+  },
+  {
+    "sc": "3.3.3",
+    "title": "Error Suggestion",
+    "principle": "Understandable",
+    "level": "AA",
+    "description": "If an input error is automatically detected and suggestions for correction are known, then the suggestions are provided to the user, unless it would jeopardize the security or purpose of the content."
+  },
+  {
+    "sc": "3.3.4",
+    "title": "Error Prevention (Legal, Financial, Data)",
+    "principle": "Understandable",
+    "level": "AA",
+    "description": "For Web pages that cause legal commitments or financial transactions for the user to occur, that modify or delete user-controllable data in data storage systems, or that submit user test responses, at least one of the following is true:"
+  },
+  {
+    "sc": "4.1.1",
+    "title": "Parsing",
+    "principle": "Robust",
+    "level": "A",
+    "description": "In content implemented using markup languages, elements have complete start and end tags, elements are nested according to their specifications, elements do not contain duplicate attributes, and any IDs are unique, except where the specifications allow these features."
+  },
+  {
+    "sc": "4.1.2",
+    "title": "Name, Role, Value",
+    "principle": "Robust",
+    "level": "A",
+    "description": "For all user interface components (including but not limited to: form elements, links and components generated by scripts), the name and role can be programmatically determined; states, properties, and values that can be set by the user can be programmatically set; and notification of changes to these items is available to user agents, including assistive technologies."
+  }
+]

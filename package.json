@@ -1,0 +1,17 @@
+{
+  "name": "a11y",
+  "version": "1.0.0",
+  "main": "accessibility-report.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "markdown-pdf": "^11.0.0",
+    "md-to-pdf": "^5.2.4",
+    "pa11y": "^8.0.0"
+  }
+}
