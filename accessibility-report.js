@@ -1,15 +1,21 @@
 const pa11y = require('pa11y');
 const fs = require('fs');
 const markdownpdf = require('markdown-pdf');
+const version = '2.2'; // wcag 2.2
+
+let wcagData = JSON.parse(fs.readFileSync('./wcag/wcag-22-aa-expanded.json', 'utf-8'));
+let wcagStructure = JSON.parse(fs.readFileSync('./wcag/wcag-22-aa-structure.json', 'utf-8'));
 
 // Load WCAG SC metadata and structure
-const wcagData = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-expanded.json', 'utf-8'));
-const wcagStructure = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-structure.json', 'utf-8'));
+if (version == '2.1') {
+    wcagData = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-expanded.json', 'utf-8'));
+    wcagStructure = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-structure.json', 'utf-8'));
+}
+
 
 // Pages to test
 const urls = [
-    { url: 'https://example.be', label: 'Homepage' },
-    { url: 'https://example.be/contact', label: 'Contact' },
+    { url: 'https://test.be', label: 'Homepage' },
 ];
 
 (async () => {
@@ -50,7 +56,7 @@ const urls = [
     markdownContent += `## 1. Evaluation Scope\n\n- **Date**: ${date}\n- **Tool**: [Pa11y](https://pa11y.org)\n- **Pages evaluated**:\n`;
     urls.forEach(({ label, url }) => markdownContent += `  - ${label}: ${url}\n`);
     
-    markdownContent += `\n## 2. Methodology\n\nThis report was generated using **automated evaluation** only. Manual testing is recommended for full conformance verification.\n- **Standard**: WCAG 2.1\n- **Conformance Level**: AA\n- **Tool**: Pa11y (headless Chrome)\n\n## 3. Summary Table of WCAG Success Criteria\n\n`;
+    markdownContent += `\n## 2. Methodology\n\nThis report was generated using **automated evaluation** only. Manual testing is recommended for full conformance verification.\n- **Standard**: WCAG ${version}\n- **Conformance Level**: AA\n- **Tool**: Pa11y (headless Chrome)\n\n## 3. Summary Table of WCAG Success Criteria\n\n`;
 
     // Loop through the structured WCAG data
     wcagStructure.forEach(({ principle, principleTitle, guidelines }) => {

@@ -1,0 +1,91 @@
+[
+  {
+    "principle": "1",
+    "principleTitle": "Perceivable",
+    "guidelines": [
+      {
+        "guideline": "1.1",
+        "title": "Text Alternatives",
+        "sc": ["1.1.1"]
+      },
+      {
+        "guideline": "1.2",
+        "title": "Time-based Media",
+        "sc": ["1.2.1", "1.2.2", "1.2.3", "1.2.4", "1.2.5"]
+      },
+      {
+        "guideline": "1.3",
+        "title": "Adaptable",
+        "sc": ["1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5"]
+      },
+      {
+        "guideline": "1.4",
+        "title": "Distinguishable",
+        "sc": ["1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.10", "1.4.11", "1.4.12", "1.4.13"]
+      }
+    ]
+  },
+  {
+    "principle": "2",
+    "principleTitle": "Operable",
+    "guidelines": [
+      {
+        "guideline": "2.1",
+        "title": "Keyboard Accessible",
+        "sc": ["2.1.1", "2.1.2", "2.1.4"]
+      },
+      {
+        "guideline": "2.2",
+        "title": "Enough Time",
+        "sc": ["2.2.1", "2.2.2"]
+      },
+      {
+        "guideline": "2.3",
+        "title": "Seizures and Physical Reactions",
+        "sc": ["2.3.1"]
+      },
+      {
+        "guideline": "2.4",
+        "title": "Navigable",
+        "sc": ["2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.11"]
+      },
+      {
+        "guideline": "2.5",
+        "title": "Input Modalities",
+        "sc": ["2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.7", "2.5.8"]
+      }
+    ]
+  },
+  {
+    "principle": "3",
+    "principleTitle": "Understandable",
+    "guidelines": [
+      {
+        "guideline": "3.1",
+        "title": "Readable",
+        "sc": ["3.1.1", "3.1.2"]
+      },
+      {
+        "guideline": "3.2",
+        "title": "Predictable",
+        "sc": ["3.2.1", "3.2.2", "3.2.3", "3.2.4", "3.2.6"]
+      },
+      {
+        "guideline": "3.3",
+        "title": "Input Assistance",
+        "sc": ["3.3.1", "3.3.2", "3.3.3", "3.3.4", "3.3.7", "3.3.8"]
+      }
+    ]
+  },
+  {
+    "principle": "4",
+    "principleTitle": "Robust",
+    "guidelines": [
+      {
+        "guideline": "4.1",
+        "title": "Compatible",
+        "sc": ["4.1.1", "4.1.2", "4.1.3"]
+      }
+    ]
+  }
+]
