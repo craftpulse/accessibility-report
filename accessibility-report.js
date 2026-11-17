@@ -1,59 +1,62 @@
 const pa11y = require('pa11y');
 const fs = require('fs');
-const markdownpdf = require('markdown-pdf');
+const markdownpdf = (...a) => require('markdown-pdf')(...a);
 const version = '2.2'; // wcag 2.2
 
-let wcagData = JSON.parse(fs.readFileSync('./wcag/wcag-22-aa-expanded.json', 'utf-8'));
-let wcagStructure = JSON.parse(fs.readFileSync('./wcag/wcag-22-aa-structure.json', 'utf-8'));
+let wcagData = JSON.parse(fs.readFileSync(__dirname + '/wcag/wcag-22-aa-expanded.json', 'utf-8'));
+let wcagStructure = JSON.parse(fs.readFileSync(__dirname + '/wcag/wcag-22-aa-structure.json', 'utf-8'));
 
 // Load WCAG SC metadata and structure
 if (version == '2.1') {
-    wcagData = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-expanded.json', 'utf-8'));
-    wcagStructure = JSON.parse(fs.readFileSync('./wcag/wcag-21-aa-structure.json', 'utf-8'));
+    wcagData = JSON.parse(fs.readFileSync(__dirname + '/wcag/wcag-21-aa-expanded.json', 'utf-8'));
+    wcagStructure = JSON.parse(fs.readFileSync(__dirname + '/wcag/wcag-21-aa-structure.json', 'utf-8'));
 }
 
 
-// Pages to test
-const urls = [
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1', label: 'Homepage' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/nieuws', label: 'Nieuws' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/nieuws/bar-brilschans-strijkt-neer-in-het-de-villegaspark', label: 'Nieuws detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/vraag-of-melding', label: 'FAQ' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/vraag-of-melding/een-vraag-melding-of-klacht-voor-het-district-berchem', label: 'FAQ detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/openbare-werken', label: 'Openbare werken' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/openbare-werken', label: 'Streetart' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/openbare-werken/heraanleg-cogels-osylei', label: 'Streetart detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/berchem-buurt', label: 'Berchem buurt' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/berchem-buurt/plaats-een-zitbank-aan-jouw-gevel', label: 'Berchem buurt detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/sport', label: 'Sport' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/sport/leer-reanimeren-met-berchem-redt', label: 'Sport detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/cultuur', label: 'Cultuur' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/cultuur/academie-berchem-muziek-woord-en-beeld', label: 'Cultuur detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/jeugd', label: 'Jeugd' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/jeugd/kinder-en-jeugdactiviteiten-jeugddienst-berchem', label: 'Jeugd detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/senioren', label: 'Senioren' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/senioren/tussenkomst-voor-huur-en-werkingskosten-van-lokalen', label: 'Senioren detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/bestuur', label: 'Bestuur' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/bestuur/samenstelling-districtscollege-berchem', label: 'Bestuur detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/groen', label: 'Groen' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/nuttige-adressen', label: 'Nuttige adressen' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/nuttige-adressen/een-vraag-melding-of-klacht-voor-het-district-berchem', label: 'Nuttige adressen detail' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/ondersteuning', label: 'Ondersteuning' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/ondersteuning/werkingtoelage-voor-berchemse-seniorenverenigingen', label: 'Ondersteuning' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/bibliotheek', label: 'Bibliotheek' },
-    { url: 'https://www.antwerpen.be/nl/overzicht/district-berchem-1/bibliotheek/programma-bib-berchem', label: 'Bibliotheek detail' },
-];
+// Pages to test, fed in rather than hard-coded:
+//   node accessibility-report.js https://example.com/ https://example.com/about
+//   node accessibility-report.js urls.json        (or URLS_FILE=urls.json)
+// A list file is JSON [{ "url": "...", "label": "..." }] or plain text, one URL
+// per line. With nothing given, urls.json is used when present, else
+// urls.example.json.
+function loadUrls() {
+    const args = process.argv.slice(2);
+    let file = process.env.URLS_FILE || args.find(a => /\.(json|txt)$/i.test(a));
+    const direct = args.filter(a => /^https?:\/\//i.test(a));
+    if (direct.length) {
+        return direct.map(url => ({ url, label: url }));
+    }
+    if (!file) {
+        file = fs.existsSync(__dirname + '/urls.json') ? __dirname + '/urls.json' : __dirname + '/urls.example.json';
+    }
+    const text = fs.readFileSync(file, 'utf-8').trim();
+    if (text.startsWith('[')) {
+        return JSON.parse(text).map(u => (typeof u === 'string' ? { url: u, label: u } : { url: u.url, label: u.label || u.url }));
+    }
+    return text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(url => ({ url, label: url }));
+}
+const urls = loadUrls();
+
+const outDir = process.env.OUT_DIR || '.';
+// Only errors decide a criterion's status; notices and warnings are prompts for
+// manual checks and would mark every criterion Not Met. ALL_TYPES=1 counts them.
 
 (async () => {
     const date = new Date().toISOString().split('T')[0];
     const resultsByPage = {};
     const issuesBySC = {};
+    const rawIssues = [];
 
     // Run Pa11y and collect issues
     for (const { url, label } of urls) {
         console.log(`Running test for ${label} (${url})...`);
         const result = await pa11y(url, {
             standard: 'WCAG2AA',
+            wait: Number(process.env.WAIT_MS || 0),
+            ignore: (process.env.IGNORE || '').split('|').filter(Boolean),
+            timeout: 60000,
+            // CHROME_PATH runs a system Chrome or Chromium (e.g. in a container)
+            ...(process.env.CHROME_PATH ? { chromeLaunchConfig: { executablePath: process.env.CHROME_PATH, args: ['--no-sandbox', '--disable-dev-shm-usage'] } } : {}),
             runners: ['axe', 'htmlcs'],
             includeNotices: true,
             includeWarnings: true,
@@ -63,8 +66,9 @@ const urls = [
         });
 
         resultsByPage[label] = [];
+        result.issues.filter(i => i.type === 'error').forEach(i => rawIssues.push({ label, url, runner: i.runner, code: i.code, message: i.message, selector: i.selector }));
 
-        result.issues.forEach(issue => {
+        result.issues.filter(issue => process.env.ALL_TYPES === '1' || issue.type === 'error').forEach(issue => {
             // Handle both standard Pa11y format and axe/htmlcs format
             let sc = null;
             
@@ -84,7 +88,7 @@ const urls = [
                     'role-img-alt': '1.1.1'
                 };
                 
-                sc = axeToWcag[issue.code] || null;
+                sc = axeToWcag[issue.code] || axeScFromTags(issue.code);
             }
             // Handle htmlcs format
             else if (issue.runner === 'htmlcs' && issue.code) {
@@ -165,12 +169,21 @@ const urls = [
 
 
     // Write the markdown content to a file
-    fs.writeFileSync('accessibility-report.md', markdownContent);
+    fs.writeFileSync(outDir + '/accessibility-report.md', markdownContent);
+    fs.writeFileSync(outDir + '/accessibility-issues.json', JSON.stringify(rawIssues, null, 2));
 
     // Convert the markdown to PDF
-    markdownpdf().from('accessibility-report.md').to('accessibility-report.pdf', () => {
-        console.log('✅ Report written to accessibility-report.pdf');
-    });
+    console.log('✅ Report written to ' + outDir + '/accessibility-report.md');
+    // NO_PDF=1 skips the PDF (markdown-pdf needs PhantomJS, which has no linux/arm64 build)
+    if (process.env.NO_PDF !== '1') {
+        try {
+            markdownpdf().from(outDir + '/accessibility-report.md').to(outDir + '/accessibility-report.pdf', () => {
+                console.log('✅ Report written to ' + outDir + '/accessibility-report.pdf');
+            });
+        } catch (e) {
+            console.log('PDF skipped: ' + e.message);
+        }
+    }
 })();
 
 // Helper function to get SC Level (A, AA)
@@ -181,4 +194,16 @@ function scLevel(sc) {
 
 function escapeTableCell(str) {
     return str.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
+}
+// axe-core tags each rule with its success criteria (e.g. wcag143 -> 1.4.3)
+let axeRuleSc = null;
+function axeScFromTags(code) {
+    if (!axeRuleSc) {
+        axeRuleSc = {};
+        require(require.resolve('axe-core', { paths: [require.resolve('pa11y')] })).getRules().forEach(r => {
+            const t = r.tags.find(x => /^wcag\d{3,4}$/.test(x));
+            if (t) { const d = t.slice(4); axeRuleSc[r.ruleId] = d[0] + '.' + d[1] + '.' + d.slice(2); }
+        });
+    }
+    return axeRuleSc[code] || null;
 }

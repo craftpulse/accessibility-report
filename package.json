@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "accessibility-report.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "report": "node accessibility-report.js",
+    "postinstall": "node patch-htmlcs.cjs"
   },
   "keywords": [],
   "author": "",
