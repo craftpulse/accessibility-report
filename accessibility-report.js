@@ -4,6 +4,8 @@ const puppeteer = require(require.resolve('puppeteer', { paths: [require.resolve
 const { resolveContrast } = require('./contrast-resolver');
 const fs = require('fs');
 const markdownpdf = (...a) => require('markdown-pdf')(...a);
+// axe with the WCAG 2.2 rules, every WCAG violation an error (runners/axe-wcag22.js)
+const axeRunner = __dirname + '/runners/axe-wcag22.js';
 const version = '2.2'; // wcag 2.2
 
 let wcagData = JSON.parse(fs.readFileSync(__dirname + '/wcag/wcag-22-aa-expanded.json', 'utf-8'));
@@ -78,7 +80,7 @@ const outDir = process.env.OUT_DIR || '.';
             wait: Number(process.env.WAIT_MS || 0),
             ignore: (process.env.IGNORE || '').split('|').filter(Boolean),
             timeout: 60000,
-            runners: ['axe', 'htmlcs'],
+            runners: [axeRunner, 'htmlcs'],
             includeNotices: true,
             includeWarnings: true,
             // Caps axe "needs further review" results at warning, so only real
@@ -88,6 +90,9 @@ const outDir = process.env.OUT_DIR || '.';
                 'Principle1.Guideline1_1.1_1_1', // Non-text Content (images, logos)
             ]
         });
+
+        // Pa11y names an issue's runner by the path it was loaded from
+        result.issues.forEach(i => { if (i.runner === axeRunner) i.runner = 'axe'; });
 
         resultsByPage[label] = [];
         const needsReview = i => Boolean(i.runnerExtras && i.runnerExtras.needsFurtherReview);

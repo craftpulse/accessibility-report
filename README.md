@@ -45,6 +45,10 @@ or plain text with one URL per line (`#` starts a comment).
   status: notices and warnings are prompts for manual checks. axe findings map
   to their criterion through axe-core's own `wcagNNN` tags.
   A "Check by hand" section follows the table (below).
+- axe runs through `runners/axe-wcag22.js`, with the WCAG 2.2 A and AA rules
+  (Pa11y's own axe runner stops at 2.1): a violation of a rule that names a WCAG
+  criterion is an error whatever its impact, while a result axe says needs
+  review, and a best-practice rule that names no criterion, is a warning.
 - `accessibility-issues.json`: every error with its page, runner, code, message
   and selector, for fixing.
 - `accessibility-check-by-hand.json`: `{ "counts": { code: n }, "checkByHand": [...] }`,
