@@ -46,6 +46,10 @@ const outDir = process.env.OUT_DIR || '.';
     const resultsByPage = {};
     const issuesBySC = {};
     const rawIssues = [];
+    // axe "incomplete" results: axe could not decide, so a person has to. pa11y 10
+    // flags them with runnerExtras.needsFurtherReview; they are never errors and
+    // never dropped, they go to the "Check by hand" list.
+    const checkByHand = [];
 
     // Run Pa11y and collect issues
     for (const { url, label } of urls) {
@@ -60,13 +64,18 @@ const outDir = process.env.OUT_DIR || '.';
             runners: ['axe', 'htmlcs'],
             includeNotices: true,
             includeWarnings: true,
+            // Caps axe "needs further review" results at warning, so only real
+            // violations are errors (pa11y 9.1+; the default is error)
+            levelCapWhenNeedsReview: 'warning',
             rules: [
                 'Principle1.Guideline1_1.1_1_1', // Non-text Content (images, logos)
             ]
         });
 
         resultsByPage[label] = [];
-        result.issues.filter(i => i.type === 'error').forEach(i => rawIssues.push({ label, url, runner: i.runner, code: i.code, message: i.message, selector: i.selector }));
+        const needsReview = i => Boolean(i.runnerExtras && i.runnerExtras.needsFurtherReview);
+        result.issues.filter(i => i.type === 'error' && !needsReview(i)).forEach(i => rawIssues.push({ label, url, runner: i.runner, code: i.code, message: i.message, selector: i.selector }));
+        result.issues.filter(needsReview).forEach(i => checkByHand.push({ label, url, runner: i.runner, code: i.code, message: i.message, selector: i.selector }));
 
         result.issues.filter(issue => process.env.ALL_TYPES === '1' || issue.type === 'error').forEach(issue => {
             // Handle both standard Pa11y format and axe/htmlcs format
@@ -168,9 +177,25 @@ const outDir = process.env.OUT_DIR || '.';
     });
 
 
+    // Check by hand: what axe could not decide, counted per code, then listed
+    const byCode = {};
+    checkByHand.forEach(i => { byCode[i.code] = (byCode[i.code] || 0) + 1; });
+    const codeCounts = Object.entries(byCode).sort((a, b) => b[1] - a[1]);
+    markdownContent += `\n## 4. Check by hand\n\n`;
+    if (!checkByHand.length) {
+        markdownContent += `Nothing: axe decided every check it ran.\n`;
+    } else {
+        markdownContent += `axe could not decide these (its "needs further review" results). They are not errors and do not change the status above, but each one needs a person to look at it.\n\n`;
+        markdownContent += `${checkByHand.length} items on ${new Set(checkByHand.map(i => i.label)).size} pages.\n\n| Code | Count |\n|------|-------|\n`;
+        codeCounts.forEach(([code, n]) => markdownContent += `| ${code} | ${n} |\n`);
+        markdownContent += `\n| Page | Code | Selector | Message |\n|------|------|----------|---------|\n`;
+        checkByHand.forEach(i => markdownContent += `| ${escapeTableCell(i.label)} | ${i.code} | \`${escapeTableCell(i.selector || '-').replace(/\|/g, '\\|')}\` | ${escapeTableCell(i.message || '').replace(/\|/g, '\\|')} |\n`);
+    }
+
     // Write the markdown content to a file
     fs.writeFileSync(outDir + '/accessibility-report.md', markdownContent);
     fs.writeFileSync(outDir + '/accessibility-issues.json', JSON.stringify(rawIssues, null, 2));
+    fs.writeFileSync(outDir + '/accessibility-check-by-hand.json', JSON.stringify({ counts: Object.fromEntries(codeCounts), checkByHand }, null, 2));
 
     // Convert the markdown to PDF
     console.log('✅ Report written to ' + outDir + '/accessibility-report.md');

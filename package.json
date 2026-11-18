@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "accessibility-report.js",
   "scripts": {
-    "report": "node accessibility-report.js",
-    "postinstall": "node patch-htmlcs.cjs"
+    "report": "node accessibility-report.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +12,9 @@
   "dependencies": {
     "markdown-pdf": "^11.0.0",
     "md-to-pdf": "^5.2.4",
-    "pa11y": "^8.0.0"
+    "pa11y": "^10.0.0"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=24"
   }
 }
