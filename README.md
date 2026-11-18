@@ -26,7 +26,9 @@ node accessibility-report.js                 # urls.json if present, else urls.e
 ```
 
 A list file is JSON, `[{ "url": "...", "label": "..." }]` (or plain URL strings),
-or plain text with one URL per line (`#` starts a comment).
+or plain text with one URL per line (`#` starts a comment). A JSON entry may
+carry a `cookie`, sent as the page request's Cookie header (a signed-in
+session), and the `userAgent` that session was opened with.
 
 | Variable | Default | What it does |
 |---|---|---|
@@ -34,6 +36,7 @@ or plain text with one URL per line (`#` starts a comment).
 | `WAIT_MS` | `0` | Wait after load, for pages that render client-side |
 | `IGNORE` | | Pa11y codes to ignore, separated by `\|` (codes contain commas) |
 | `CHROME_PATH` | | Use a system Chrome or Chromium (adds `--no-sandbox`, for containers) |
+| `IGNORE_CERT_ERRORS` | on | A certificate the browser does not trust (a local one) is accepted; `0` refuses it |
 | `NO_PDF` | | `1` skips the PDF |
 | `ALL_TYPES` | | `1` lets notices and warnings decide status too (by default only errors do) |
 | `RESOLVE_CONTRAST` | on | `0` turns off measuring the color contrast axe could not decide (below) |
@@ -51,6 +54,8 @@ or plain text with one URL per line (`#` starts a comment).
   review, and a best-practice rule that names no criterion, is a warning.
 - `accessibility-issues.json`: every error with its page, runner, code, message
   and selector, for fixing.
+- `accessibility-failures.json`: the pages that did not load, with the error.
+  The run goes on without them, and they neither pass nor fail a criterion.
 - `accessibility-check-by-hand.json`: `{ "counts": { code: n }, "checkByHand": [...] }`,
   every item with its page, url, runner, code, message and selector.
 - `accessibility-contrast-measured.json`: `{ "enabled", "counts", "measured": [...] }`,

@@ -36,13 +36,14 @@ function loadUrls() {
     }
     const text = fs.readFileSync(file, 'utf-8').trim();
     if (text.startsWith('[')) {
-        return JSON.parse(text).map(u => (typeof u === 'string' ? { url: u, label: u } : { url: u.url, label: u.label || u.url }));
+        return JSON.parse(text).map(u => (typeof u === 'string' ? { url: u, label: u } : { url: u.url, label: u.label || u.url, cookie: u.cookie || '', userAgent: u.userAgent || '' }));
     }
     return text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(url => ({ url, label: url }));
 }
 const urls = loadUrls();
 
 const outDir = process.env.OUT_DIR || '.';
+
 // Only errors decide a criterion's status; notices and warnings are prompts for
 // manual checks and would mark every criterion Not Met. ALL_TYPES=1 counts them.
 
@@ -62,34 +63,56 @@ const outDir = process.env.OUT_DIR || '.';
 
     // One browser for the run; each page gets a fresh tab, which stays open after
     // pa11y so the resolver measures the page exactly as it was tested.
-    // CHROME_PATH runs a system Chrome or Chromium (e.g. in a container)
-    const launchConfig = { acceptInsecureCerts: true, ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH, args: ['--no-sandbox', '--disable-dev-shm-usage'] } : {}) };
+    // CHROME_PATH runs a system Chrome or Chromium (e.g. in a container);
+    // a certificate the browser does not trust (a local one) is accepted, unless
+    // IGNORE_CERT_ERRORS=0
+    const launchConfig = {
+        ...(process.env.IGNORE_CERT_ERRORS !== '0' ? { acceptInsecureCerts: true } : {}),
+        ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH, args: ['--no-sandbox', '--disable-dev-shm-usage'] } : {}),
+    };
     let browser = null;
+    // Pages that did not load, recorded in accessibility-failures.json
+    const failures = [];
 
     // Run Pa11y and collect issues
-    for (const { url, label } of urls) {
+    for (const { url, label, cookie, userAgent } of urls) {
         console.log(`Running test for ${label} (${url})...`);
         if (!browser || !browser.connected) {
             browser = await puppeteer.launch(launchConfig);
         }
         const page = await browser.newPage();
-        const result = await pa11y(url, {
-            browser,
-            page,
-            standard: 'WCAG2AA',
-            wait: Number(process.env.WAIT_MS || 0),
-            ignore: (process.env.IGNORE || '').split('|').filter(Boolean),
-            timeout: 60000,
-            runners: [axeRunner, 'htmlcs'],
-            includeNotices: true,
-            includeWarnings: true,
-            // Caps axe "needs further review" results at warning, so only real
-            // violations are errors (pa11y 9.1+; the default is error)
-            levelCapWhenNeedsReview: 'warning',
-            rules: [
-                'Principle1.Guideline1_1.1_1_1', // Non-text Content (images, logos)
-            ]
-        });
+        let result;
+        try {
+            result = await pa11y(url, {
+                browser,
+                page,
+                standard: 'WCAG2AA',
+                wait: Number(process.env.WAIT_MS || 0),
+                ignore: (process.env.IGNORE || '').split('|').filter(Boolean),
+                timeout: 60000,
+                // A list entry's `cookie` rides the page request (a signed-in session), with
+                // the `userAgent` the session was opened with: Pa11y replaces every header of
+                // that request with these, so the User-Agent goes in them too
+                headers: cookie ? { Cookie: cookie, ...(userAgent ? { 'User-Agent': userAgent } : {}) } : {},
+                ...(userAgent ? { userAgent } : {}),
+                runners: [axeRunner, 'htmlcs'],
+                includeNotices: true,
+                includeWarnings: true,
+                // Caps axe "needs further review" results at warning, so only real
+                // violations are errors (pa11y 9.1+; the default is error)
+                levelCapWhenNeedsReview: 'warning',
+                rules: [
+                    'Principle1.Guideline1_1.1_1_1', // Non-text Content (images, logos)
+                ]
+            });
+        } catch (e) {
+            // A page that fails to load is recorded, not the end of the run
+            const error = e.message.split('\n')[0];
+            console.log(`ERROR ${label}: ${error}`);
+            failures.push({ label, url, error });
+            await page.close().catch(() => null);
+            continue;
+        }
 
         // Pa11y names an issue's runner by the path it was loaded from
         result.issues.forEach(i => { if (i.runner === axeRunner) i.runner = 'axe'; });
@@ -196,7 +219,8 @@ const outDir = process.env.OUT_DIR || '.';
                 
                 if (affectedPages.length > 0) {
                     // Get list of pages that meet the criteria
-                    const allPageLabels = urls.map(u => u.label);
+                    // A page that failed to load neither passes nor fails
+                    const allPageLabels = urls.map(u => u.label).filter(l => !failures.some(f => f.label === l));
                     const failingPages = affectedPages;
                     const passingPages = allPageLabels.filter(label => !failingPages.includes(label));
                     
@@ -270,6 +294,7 @@ const outDir = process.env.OUT_DIR || '.';
     fs.writeFileSync(outDir + '/accessibility-issues.json', JSON.stringify(rawIssues, null, 2));
     fs.writeFileSync(outDir + '/accessibility-check-by-hand.json', JSON.stringify({ counts: Object.fromEntries(codeCounts), checkByHand }, null, 2));
     fs.writeFileSync(outDir + '/accessibility-contrast-measured.json', JSON.stringify({ enabled: resolve, counts: tally, measured }, null, 2));
+    fs.writeFileSync(outDir + '/accessibility-failures.json', JSON.stringify(failures, null, 2));
 
     // Convert the markdown to PDF
     console.log('✅ Report written to ' + outDir + '/accessibility-report.md');
