@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrast resolver cases</title>
+<style>
+  body { margin: 0; padding: 24px; font: 16px/1.5 sans-serif; background: #fff; color: #111; }
+  .case { margin: 0 0 16px; padding: 16px; }
+  /* 1. white on a light gradient: must fail (about 1.1:1) */
+  #c1 { background: linear-gradient(90deg, #f0f0f0, #d0d0d0); color: #fff; }
+  /* 2. dark text on a gradient: must pass (about 14:1 at the darkest end) */
+  #c2 { background: linear-gradient(90deg, #fff, #e0e0e0); color: #1a1a1a; }
+  /* 3. text over an image: white over a dark image passes, white over a light one fails */
+  #c3 { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23202040'/%3E%3Ccircle cx='20' cy='20' r='14' fill='%23303060'/%3E%3C/svg%3E"); color: #fff; }
+  #c3b { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23e8f0ff'/%3E%3Ccircle cx='20' cy='20' r='14' fill='%23c8d8f8'/%3E%3C/svg%3E"); color: #fff; }
+  /* 4. a semi-transparent card on a scrim: #333 passes, #999 fails */
+  .stage { position: relative; height: 260px; margin: 0 0 16px; background: #fff; }
+  .stage p { margin: 0; padding: 16px; }
+  .scrim { position: absolute; inset: 0; background: radial-gradient(circle, rgba(0,0,0,.5), rgba(0,0,0,.7)); }
+  .card { position: absolute; left: 40px; right: 40px; top: 60px; padding: 8px 16px; background: rgba(255,255,255,.85); border-radius: 8px; }
+  #c4 { color: #333; }
+  #c4b { color: #999; }
+  /* 5. large text: 20px bold white on #767676 to #808080 passes at 3:1; the same at 16px fails 4.5:1 */
+  #c5, #c5b { background: linear-gradient(90deg, #767676, #808080); color: #fff; }
+  #c5 { font-size: 20px; font-weight: 700; }
+  /* 6. an animation that never settles */
+  @keyframes pulse { from { background-position: 0 0; } to { background-position: 200px 0; } }
+  #c6 { background: linear-gradient(90deg, #ddd, #fff, #ddd); background-size: 200px 100%; animation: pulse 2s linear infinite; color: #555; }
+  /* 7. page text under a scrim hit testing cannot see: covered, never measured as if on top */
+  .stage2 { position: relative; height: 80px; margin: 0 0 16px; background: linear-gradient(90deg, #fff, #f4f4f4); }
+  .stage2 .scrim { pointer-events: none; background: rgba(0,0,0,.45); }
+  #c7 { margin: 0; padding: 16px; color: #555; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Contrast resolver cases</h1>
+  <p class="case" id="c1">White text on a light gradient</p>
+  <p class="case" id="c2">Dark text on a light gradient</p>
+  <p class="case" id="c3">White text over a dark image</p>
+  <p class="case" id="c3b">White text over a light image</p>
+  <div class="stage">
+    <p id="c6under">Page text under the scrim</p>
+    <div class="scrim"></div>
+    <div class="card">
+      <p id="c4">Dark text on a semi-transparent card</p>
+      <p id="c4b">Light text on a semi-transparent card</p>
+    </div>
+  </div>
+  <p class="case" id="c5">Large bold white text on mid gray</p>
+  <p class="case" id="c5b">Small white text on mid gray</p>
+  <div class="stage2"><p id="c7">Page text under a scrim that takes no pointer events</p><div class="scrim"></div></div>
+  <p class="case" id="c6">Text over a moving gradient</p>
+</main>
+</body>
+</html>
