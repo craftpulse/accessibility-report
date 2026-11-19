@@ -36,6 +36,7 @@ or plain text with one URL per line (`#` starts a comment).
 | `CHROME_PATH` | | Use a system Chrome or Chromium (adds `--no-sandbox`, for containers) |
 | `NO_PDF` | | `1` skips the PDF |
 | `ALL_TYPES` | | `1` lets notices and warnings decide status too (by default only errors do) |
+| `RESOLVE_CONTRAST` | on | `0` turns off measuring the color contrast axe could not decide (below) |
 
 ## Output
 
@@ -48,6 +49,10 @@ or plain text with one URL per line (`#` starts a comment).
   and selector, for fixing.
 - `accessibility-check-by-hand.json`: `{ "counts": { code: n }, "checkByHand": [...] }`,
   every item with its page, url, runner, code, message and selector.
+- `accessibility-contrast-measured.json`: `{ "enabled", "counts", "measured": [...] }`,
+  every color contrast item the report measured (below), with its status
+  (`pass`, `fail` or `undecided`), ratio, required ratio, text color, worst,
+  lightest and darkest background pixel, axe's reason and, when undecided, why.
 
 ## Check by hand
 
@@ -58,6 +63,46 @@ these with `runnerExtras.needsFurtherReview`, and the report runs with
 change a criterion's status. They are not dropped either: every one is listed
 under "Check by hand" in the markdown, with counts per code, and in
 `accessibility-check-by-hand.json`. Real violations stay errors.
+
+## Measured by the report
+
+Most of what axe could not decide is color contrast: text over a gradient, an
+image, a semi-transparent layer, an overlap or a pseudo-element, where axe
+cannot work out the background. The text is still on screen, so the report
+measures it from the pixels, on the same page pa11y just tested
+(`contrast-resolver.js`):
+
+1. Waits for animations and transitions to finish (`document.getAnimations()`),
+   then emulates `prefers-reduced-motion: reduce` if some still run.
+2. Scrolls the element into view and takes its glyph boxes (the client rects
+   of its own text nodes; the content box for a form field), minus whatever
+   the viewport and overflow-clipping ancestors cut off.
+3. Draws its text transparent (`color`, `-webkit-text-fill-color`,
+   `text-shadow`, `caret-color`, `text-decoration-color`), screenshots the glyph boxes and restores it,
+   so the screenshot holds the real background.
+4. Composites the text color, with the opacity of every ancestor, over every
+   background pixel inside the glyph boxes and takes the worst contrast, not
+   the average, against 4.5:1, or 3:1 for large text (24px, or 18.66px at
+   weight 700 or more; WCAG 2.2 SC 1.4.3).
+
+A failure is an error like any other (code `color-contrast`, runner
+`resolver`, the measured ratio in the message) and counts toward SC 1.4.3. A
+pass leaves the list. Before measuring, the text is also painted solid white
+and solid black: if less of it reaches the screen than its own opacity
+allows, something translucent lies on top (a scrim behind a dialog, which
+hit testing cannot see when it takes no pointer events), and the element
+counts as covered. What cannot be measured stays under "Check by hand",
+with the reason: element not found, zero size, off screen, clipped by an
+ancestor, covered by another element, animation not settled, text painted
+with a gradient or image, filter or blend mode on the text, text is
+transparent, fails without its text shadow, icon characters only, or empty
+field. The markdown's "Measured by the report" section counts passed, failed
+and still undecided, by reason, and lists the failures.
+
+`test/contrast.html` holds known cases (white on a light gradient fails, dark
+text on a gradient passes, text over a dark and a light image, a
+semi-transparent card on a scrim, large text at 3:1, text under the scrim,
+an animation that never settles).
 
 Automated testing finds part of what WCAG asks; keyboard use, focus order and
 content on hover still need a manual pass.
